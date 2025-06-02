@@ -1,0 +1,361 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Tableau de bord</h1>
+    <div class="filter export-buttons-inline">
+      <mat-form-field appearance="outline">
+        <mat-label>Sélectionner l'année</mat-label>
+        <mat-select [(ngModel)]="selectedYear" (selectionChange)="updateDashboard()">
+          <mat-option *ngFor="let year of years" [value]="year">{{ year || 'Toutes les années' }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-stroked-button color="primary" (click)="exportStatsToExcel()">
+        <mat-icon>table_view</mat-icon> Exporter Excel
+      </button>
+      <button mat-stroked-button color="accent" (click)="exportStatsToPDF()">
+        <mat-icon>picture_as_pdf</mat-icon> Exporter PDF
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner color="accent"></mat-spinner>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Vue d'ensemble -->
+    <mat-card class="dashboard-card overview-card">
+      <mat-card-header>
+        <mat-card-title>Vue d'ensemble</mat-card-title>
+        <mat-icon>dashboard</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="metrics-grid">
+          <div class="metric-card sales">
+            <mat-icon>attach_money</mat-icon>
+            <div class="metric-content">
+              <h3>Ventes totales  </h3>
+              <p>{{ totalSales | currency:'TND' }}</p>
+            </div>
+          </div>
+          
+          <div class="metric-card clients">
+            <mat-icon>people</mat-icon>
+            <div class="metric-content">
+              <h3>Clients actifs</h3>
+              <p>{{ activeClients }}</p>
+            </div>
+          </div>
+          
+          <div class="metric-card new-clients">
+            <mat-icon>person_add</mat-icon>
+            <div class="metric-content">
+              <h3>Nouveaux clients</h3>
+              <p>{{ newClients }}</p>
+            </div>
+          </div>
+          
+          <div class="metric-card stock">
+            <mat-icon>warning</mat-icon>
+            <div class="metric-content">
+              <h3>Ruptures de stock</h3>
+              <p>{{ outOfStockCount }}</p>
+            </div>
+          </div>
+
+          <div class="metric-card top-product" *ngIf="topSoldProducts.length">
+            <mat-icon>star</mat-icon>
+            <div class="metric-content">
+              <h3>Produit le plus vendu</h3>
+              <p>
+                {{ topSoldProducts[0]?.produitNom || 'N/A' }}<br>
+                <span class="top-product-qty">({{ topSoldProducts[0]?.quantiteVendue }} vendus)</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="chart-row">
+          <div class="chart-container">
+            <h3>Ventes par année</h3>
+            <canvas id="salesByYearChart" baseChart
+                    *ngIf="salesByYearChart && salesByYearChart.data"
+                    [data]="salesByYearChart.data"
+                    [options]="salesByYearChart.options"
+                    [type]="salesByYearChart.type">
+            </canvas>
+          </div>
+          
+          <div class="chart-container">
+            <h3>Statut des factures</h3>
+            <canvas id="invoiceStatusChart" baseChart
+                    *ngIf="invoiceStatusChart && invoiceStatusChart.data"
+                    [data]="invoiceStatusChart.data"
+                    [options]="invoiceStatusChart.options"
+                    [type]="invoiceStatusChart.type">
+            </canvas>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Gestion des clients -->
+    <mat-card class="dashboard-card clients-card">
+      <mat-card-header>
+        <mat-card-title>Gestion des clients</mat-card-title>
+        <mat-icon>group</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-section">
+          <h3>Top 5 clients</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="topClientsDataSource" class="custom-table">
+              <ng-container matColumnDef="clientNom">
+                <th mat-header-cell *matHeaderCellDef>Client</th>
+                <td mat-cell *matCellDef="let client">{{ client.clientNom }}</td>
+              </ng-container>
+              <ng-container matColumnDef="chiffreAffaires">
+                <th mat-header-cell *matHeaderCellDef>Chiffre d'affaires</th>
+                <td mat-cell *matCellDef="let client">{{ client.chiffreAffaires | currency:'TND' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="topClientsColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: topClientsColumns"></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Chiffre d'affaires par client</h3>
+          <canvas id="revenueByClientChart" baseChart
+                  *ngIf="revenueByClientChart && revenueByClientChart.data"
+                  [data]="revenueByClientChart.data"
+                  [options]="revenueByClientChart.options"
+                  [type]="revenueByClientChart.type">
+          </canvas>
+        </div>
+        
+        <div class="card-section">
+          <h3>Clients débiteurs</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="clientsWithDebtsDataSource" class="custom-table">
+              <ng-container matColumnDef="clientNom">
+                <th mat-header-cell *matHeaderCellDef>Client</th>
+                <td mat-cell *matCellDef="let client">{{ client.clientNom }}</td>
+              </ng-container>
+              <ng-container matColumnDef="debt">
+                <th mat-header-cell *matHeaderCellDef>Dette</th>
+                <td mat-cell *matCellDef="let client">{{ client.debt | currency:'TND' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="clientsWithDebtsColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: clientsWithDebtsColumns"></tr>
+            </table>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Gestion des produits -->
+    <mat-card class="dashboard-card products-card">
+      <mat-card-header>
+        <mat-card-title>Gestion des produits</mat-card-title>
+        <mat-icon>inventory</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-section">
+          <h3>Top 5 produits</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="topProductsDataSource" class="custom-table">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Produit</th>
+                <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+              </ng-container>
+              <ng-container matColumnDef="quantitySold">
+                <th mat-header-cell *matHeaderCellDef>Quantité vendue</th>
+                <td mat-cell *matCellDef="let product">{{ product.quantitySold }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="topProductsColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: topProductsColumns"></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="card-section">
+          <h3>Ruptures de stock</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="outOfStockDataSource" class="custom-table">
+              <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef>Produit</th>
+                <td mat-cell *matCellDef="let product">{{ product.name }}</td>
+              </ng-container>
+              <ng-container matColumnDef="price">
+                <th mat-header-cell *matHeaderCellDef>Prix</th>
+                <td mat-cell *matCellDef="let product">{{ product.price | currency:'TND' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="outOfStockColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: outOfStockColumns"></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Ventes par catégorie</h3>
+          <canvas id="salesByCategoryChart" baseChart
+                  *ngIf="salesByCategoryChart && salesByCategoryChart.data"
+                  [data]="salesByCategoryChart.data"
+                  [options]="salesByCategoryChart.options"
+                  [type]="salesByCategoryChart.type">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Factures & Règlements -->
+    <mat-card class="dashboard-card invoices-card">
+      <mat-card-header>
+        <mat-card-title>Factures & Règlements</mat-card-title>
+        <mat-icon>receipt</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="card-section">
+          <h3>Factures réglées</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="settledInvoicesDataSource" class="custom-table">
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.id }}</td>
+              </ng-container>
+              <ng-container matColumnDef="clientName">
+                <th mat-header-cell *matHeaderCellDef>Client</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.client?.name || 'N/A' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Total</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.total | currency:'TND' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.status || 'N/A' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="dateFacture">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.dateFacture | date:'shortDate' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="invoicesColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: invoicesColumns"></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="card-section">
+          <h3>Factures en attente</h3>
+          <div class="table-container">
+            <table mat-table [dataSource]="pendingInvoicesDataSource" class="custom-table">
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef>ID</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.id }}</td>
+              </ng-container>
+              <ng-container matColumnDef="clientName">
+                <th mat-header-cell *matHeaderCellDef>Client</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.client?.name || 'N/A' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="total">
+                <th mat-header-cell *matHeaderCellDef>Total</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.total | currency:'TND' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="status">
+                <th mat-header-cell *matHeaderCellDef>Statut</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.status || 'N/A' }}</td>
+              </ng-container>
+              <ng-container matColumnDef="dateFacture">
+                <th mat-header-cell *matHeaderCellDef>Date</th>
+                <td mat-cell *matCellDef="let invoice">{{ invoice.dateFacture | date:'shortDate' }}</td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="invoicesColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: invoicesColumns"></tr>
+            </table>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Règlements vs Restant</h3>
+          <canvas id="paymentsVsRemainingChart" baseChart
+                  *ngIf="paymentsVsRemainingChart && paymentsVsRemainingChart.data"
+                  [data]="paymentsVsRemainingChart.data"
+                  [options]="paymentsVsRemainingChart.options"
+                  [type]="paymentsVsRemainingChart.type">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Statistiques -->
+    <mat-card class="dashboard-card stats-card">
+      <mat-card-header>
+        <mat-card-title>Statistiques</mat-card-title>
+        <mat-icon>analytics</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="payment-rate">
+          <h3>Taux de paiement</h3>
+          <div class="rate-display">
+            <div class="rate-circle">
+              <div class="circle-progress" [style.--percentage]="paymentRate.paidPercentage">
+                <span>{{ paymentRate.paidPercentage | number:'1.0-0' }}%</span>
+              </div>
+              <p>Payé</p>
+            </div>
+            <div class="rate-info">
+              <p><span class="paid">{{ paymentRate.paidPercentage | number:'1.2-2' }}%</span> Payé</p>
+              <p><span class="pending">{{ paymentRate.pendingPercentage | number:'1.2-2' }}%</span> En attente</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Évolution du chiffre d'affaires
+            <span *ngIf="growthRate !== null" class="growth-indicator" [ngClass]="{'growth-up': growthRate > 0, 'growth-down': growthRate < 0}">
+              <mat-icon>{{ growthRate > 0 ? 'trending_up' : (growthRate < 0 ? 'trending_down' : 'trending_flat') }}</mat-icon>
+              {{ growthRate > 0 ? '+' : '' }}{{ growthRate | number:'1.1-1' }}%
+              <span class="growth-period">(vs {{ growthPeriod === 'mois' ? 'mois précédent' : 'période précédente' }})</span>
+            </span>
+          </h3>
+          <canvas id="revenueTrendChart" baseChart
+                  *ngIf="revenueTrendChart && revenueTrendChart.data"
+                  [data]="revenueTrendChart.data"
+                  [options]="revenueTrendChart.options"
+                  [type]="revenueTrendChart.type">
+          </canvas>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Historique des actions -->
+    <mat-card class="dashboard-card actions-card">
+      <mat-card-header>
+        <mat-card-title>Historique des actions</mat-card-title>
+        <mat-icon>history</mat-icon>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-timeline modern-timeline">
+          <div *ngIf="recentActions.length === 0" class="empty-history">Aucune action récente.</div>
+          <ul *ngIf="recentActions.length">
+            <li *ngFor="let action of recentActions" class="timeline-item">
+              <span class="timeline-dot" [ngClass]="{
+                'vente-dot': action.type === 'vente',
+                'client-dot': action.type === 'client',
+                'reglement-dot': action.type === 'reglement'
+              }"></span>
+              <div class="timeline-content">
+                <mat-icon class="timeline-icon vente-icon" *ngIf="action.type === 'vente'">shopping_cart</mat-icon>
+                <mat-icon class="timeline-icon client-icon" *ngIf="action.type === 'client'">person_add</mat-icon>
+                <mat-icon class="timeline-icon reglement-icon" *ngIf="action.type === 'reglement'">payment</mat-icon>
+                <span class="action-label">{{ action.label }}</span>
+                <span class="action-date">({{ action.date | date:'short' }})</span>
+                <span class="action-details">- {{ action.details }}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

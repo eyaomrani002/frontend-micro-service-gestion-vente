@@ -1,0 +1,115 @@
+<div class="modern-detail-container" *ngIf="!loading && client; else loadingOrError">
+  <div class="detail-header">
+    <mat-icon class="header-icon">person</mat-icon>
+    <h2>{{ client.name }}</h2>
+  </div>
+
+  <mat-tab-group>
+    <mat-tab label="Détails">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">email</mat-icon>
+            <div class="detail-content">
+              <h3>Email</h3>
+              <a href="mailto:{{ client.email }}" class="detail-value">{{ client.email }}</a>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">location_on</mat-icon>
+            <div class="detail-content">
+              <h3>Adresse</h3>
+              <p class="detail-value">{{ client.adresse || 'Non renseignée' }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+    <mat-tab label="Statistiques">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">attach_money</mat-icon>
+            <div class="detail-content">
+              <h3>Chiffre d'affaires</h3>
+              <p class="detail-value">{{ chiffreAffaires | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">money_off</mat-icon>
+            <div class="detail-content">
+              <h3>Reste à payer</h3>
+              <p class="detail-value">{{ resteAPayer | currency:'TND' }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <h3>Factures Réglées</h3>
+      <table mat-table [dataSource]="facturesReglees" class="modern-table">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let facture">{{ facture.id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let facture">{{ facture.total | currency:'TND' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['id', 'total']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['id', 'total'];"></tr>
+      </table>
+      <h3>Factures Non Réglées</h3>
+      <table mat-table [dataSource]="facturesNonReglees" class="modern-table">
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef>ID</th>
+          <td mat-cell *matCellDef="let facture">{{ facture.id }}</td>
+        </ng-container>
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total</th>
+          <td mat-cell *matCellDef="let facture">{{ facture.total | currency:'TND' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="resteAPayer">
+          <th mat-header-cell *matHeaderCellDef>Reste à Payer</th>
+          <td mat-cell *matCellDef="let facture">{{ facture.resteAPayer | currency:'TND' }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['id', 'total', 'resteAPayer']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['id', 'total', 'resteAPayer'];"></tr>
+      </table>
+      <h3>Produits les plus sollicités</h3>
+      <table mat-table [dataSource]="produitsSollicites" class="modern-table">
+        <ng-container matColumnDef="produitId">
+          <th mat-header-cell *matHeaderCellDef>Produit ID</th>
+          <td mat-cell *matCellDef="let produit">{{ produit.produitId }}</td>
+        </ng-container>
+        <ng-container matColumnDef="quantite">
+          <th mat-header-cell *matHeaderCellDef>Quantité</th>
+          <td mat-cell *matCellDef="let produit">{{ produit.quantite }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['produitId', 'quantite']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['produitId', 'quantite'];"></tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="detail-actions">
+    <button mat-raised-button color="accent" (click)="goToEdit()">
+      <mat-icon>edit</mat-icon>
+      Modifier
+    </button>
+    <button mat-stroked-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </div>
+</div>
+
+<ng-template #loadingOrError>
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données client...</p>
+  </div>
+  <div *ngIf="error" class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h3>Une erreur est survenue</h3>
+    <p>{{ error }}</p>
+  </div>
+</ng-template>

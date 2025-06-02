@@ -1,0 +1,95 @@
+<div class="modern-form-container accent-blue">
+  <div class="form-header">
+    <mat-icon class="header-icon">{{ isEditMode ? 'edit' : 'add_shopping_cart' }}</mat-icon>
+    <h2>{{ isEditMode ? 'Modifier le produit' : 'Ajouter un produit' }}</h2>
+  </div>
+
+  <form [formGroup]="produitForm" (ngSubmit)="onSubmit()" novalidate class="modern-form">
+    
+    <!-- Nom -->
+    <mat-form-field appearance="outline" class="form-field purple-field">
+      <mat-label>Nom du produit</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-icon matSuffix>shopping_cart</mat-icon>
+      <mat-error *ngIf="produitForm.get('name')?.hasError('required')">
+        Le nom est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Prix -->
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Prix</mat-label>
+      <input matInput type="number" formControlName="price" required>
+      <mat-icon matSuffix>attach_money</mat-icon>
+      <mat-error *ngIf="produitForm.get('price')?.hasError('required')">
+        Le prix est obligatoire
+      </mat-error>
+      <mat-error *ngIf="produitForm.get('price')?.hasError('min')">
+        Le prix doit être positif
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Quantité -->
+    <mat-form-field appearance="outline" class="form-field green-field">
+      <mat-label>Quantité</mat-label>
+      <input matInput type="number" formControlName="quantity" required>
+      <mat-icon matSuffix>inventory</mat-icon>
+      <mat-error *ngIf="produitForm.get('quantity')?.hasError('required')">
+        La quantité est obligatoire
+      </mat-error>
+      <mat-error *ngIf="produitForm.get('quantity')?.hasError('min')">
+        La quantité doit être positive
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Catégorie -->
+    <mat-form-field appearance="outline" class="form-field orange-field">
+      <mat-label>Catégorie</mat-label>
+      <mat-select formControlName="categorie">
+        <mat-option value="">Aucune</mat-option>
+        <mat-option *ngFor="let categorie of categories$ | async" [value]="categorie.id">
+          {{ categorie.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Version -->
+    <mat-form-field appearance="outline" class="form-field blue-field">
+      <mat-label>Version</mat-label>
+      <input matInput type="number" formControlName="version" required>
+      <mat-icon matSuffix>update</mat-icon>
+      <mat-error *ngIf="produitForm.get('version')?.hasError('required')">
+        La version est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Description (facultatif) -->
+    <mat-form-field appearance="outline" class="form-field gray-field">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+      <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <!-- Messages -->
+    <div *ngIf="error" class="error-message coral-bg">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message mint-bg">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Boutons -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || produitForm.invalid" class="primary-btn">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      <button mat-button type="button" (click)="onCancel()" [disabled]="loading" class="secondary-btn">
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>

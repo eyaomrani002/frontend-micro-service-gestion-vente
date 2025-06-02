@@ -1,0 +1,58 @@
+<nav class="sidebar">
+  <div class="sidebar-header">
+    <span class="app-logo">🧩</span>
+    <span class="app-title">Gestion Ventes</span>
+  </div>
+
+  <ul class="sidebar-nav">
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-bar-chart-fill"></i>
+        <span>Tableau de bord</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/clients" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-people-fill"></i>
+        <span>Clients</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/produits" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-box-seam"></i>
+        <span>Produits</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/factures" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-receipt"></i>
+        <span>Factures</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/reglements" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-credit-card-2-front-fill"></i>
+        <span>Règlements</span>
+      </a>
+    </li>
+    <li>
+      <a routerLink="/devises" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <i class="bi bi-currency-exchange"></i>
+        <span>Devises</span>
+      </a>
+    </li>
+    <li>
+  <a routerLink="/produits/categories" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <i class="bi bi-tags-fill"></i>
+    <span>Catégories</span>
+  </a>
+</li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <a class="logout-link" (click)="logout()" style="cursor:pointer;">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>Déconnexion</span>
+    </a>
+  </div>
+</nav>

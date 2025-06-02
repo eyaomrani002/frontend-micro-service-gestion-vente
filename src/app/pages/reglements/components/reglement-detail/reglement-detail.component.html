@@ -1,0 +1,101 @@
+<div class="modern-detail-container" *ngIf="!loading && reglement; else loadingOrError">
+  <div class="detail-header">
+    <mat-icon class="header-icon">payment</mat-icon>
+    <h2>Détails du Règlement</h2>
+  </div>
+
+  <mat-tab-group>
+    <mat-tab label="Informations">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">tag</mat-icon>
+            <div class="detail-content">
+              <h3>ID</h3>
+              <p class="detail-value">{{ reglement.id }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">receipt</mat-icon>
+            <div class="detail-content">
+              <h3>ID Facture</h3>
+              <p class="detail-value">{{ reglement.factureId }}</p>
+            </div>
+          </div>
+          <div class="detail-item" *ngIf="facture">
+            <mat-icon class="detail-icon">person</mat-icon>
+            <div class="detail-content">
+              <h3>Client</h3>
+              <p class="detail-value">{{ facture.client.name }}</p>
+            </div>
+          </div>
+          <div class="detail-item" *ngIf="facture">
+            <mat-icon class="detail-icon">attach_money</mat-icon>
+            <div class="detail-content">
+              <h3>Total Facture</h3>
+              <p class="detail-value">{{ facture.total | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">euro</mat-icon>
+            <div class="detail-content">
+              <h3>Montant</h3>
+              <p class="detail-value">{{ reglement.montant | currency:reglement.modePaiement }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">event</mat-icon>
+            <div class="detail-content">
+              <h3>Date</h3>
+              <p class="detail-value">{{ reglement.dateReglement | date:'short' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">payments</mat-icon>
+            <div class="detail-content">
+              <h3>Devise</h3>
+              <p class="detail-value">{{ reglement.modePaiement }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">description</mat-icon>
+            <div class="detail-content">
+              <h3>Référence</h3>
+              <p class="detail-value">{{ reglement.reference }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">info</mat-icon>
+            <div class="detail-content">
+              <h3>Statut</h3>
+              <p class="detail-value">{{ reglement.statut }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="detail-actions">
+    <button mat-raised-button color="accent" [routerLink]="['/reglements/edit', reglement.id]">
+      <mat-icon>edit</mat-icon>
+      Modifier
+    </button>
+    <button mat-stroked-button [routerLink]="['/reglements']">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </div>
+</div>
+
+<ng-template #loadingOrError>
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données du règlement...</p>
+  </div>
+  <div *ngIf="error" class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h3>Une erreur est survenue</h3>
+    <p>{{ error }}</p>
+  </div>
+</ng-template>

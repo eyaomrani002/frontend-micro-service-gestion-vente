@@ -1,0 +1,138 @@
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css');
+
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  width: 230px;
+  background: linear-gradient(135deg, #1976d2 80%, #42a5f5 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.09);
+  z-index: 1000;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 28px 20px 18px 20px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.sidebar-header .app-logo {
+  font-size: 2rem;
+  margin-right: 10px;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.sidebar-nav li {
+  width: 100%;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: #fff;
+  text-decoration: none;
+  padding: 12px 24px;
+  font-size: 1.08rem;
+  border-radius: 0 25px 25px 0;
+  transition: background 0.2s, color 0.2s;
+  opacity: 0.90;
+}
+
+.sidebar-nav a:hover,
+.sidebar-nav a.active {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  opacity: 1;
+}
+
+.sidebar-nav i {
+  font-size: 1.3rem;
+  opacity: 0.85;
+}
+
+.sidebar-footer {
+  padding: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 1.05rem;
+  opacity: 0.85;
+  transition: opacity 0.2s;
+}
+
+.logout-link:hover {
+  opacity: 1;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .sidebar {
+    position: fixed;
+    width: 100vw;
+    height: 60px;
+    flex-direction: row;
+    top: 0;
+    left: 0;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.09);
+  }
+
+  .sidebar-header {
+    display: none;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    align-items: center;
+    margin-top: 0;
+    width: 100%;
+    gap: 0;
+    justify-content: space-around;
+  }
+
+  .sidebar-nav a {
+    border-radius: 0;
+    padding: 10px 8px;
+    font-size: 1rem;
+    justify-content: center;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .sidebar-nav i {
+    font-size: 1.1rem;
+  }
+
+  .sidebar-nav span {
+    font-size: 0.88rem;
+    display: block;
+  }
+
+  .sidebar-footer {
+    display: none;
+  }
+}

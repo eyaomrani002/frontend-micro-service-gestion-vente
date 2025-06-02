@@ -1,0 +1,101 @@
+<div *ngIf="!loading; else loadingSpinner" class="modern-container">
+  <div class="header-section">
+    <h2>Gestion des règlements</h2>
+    <button mat-flat-button color="primary" (click)="createReglement()" class="add-button">
+      <mat-icon>add</mat-icon>
+      Nouveau règlement
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="reglements" class="modern-table">
+      <!-- Colonne ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">ID</th>
+        <td mat-cell *matCellDef="let r" class="cell">{{ r.id }}</td>
+      </ng-container>
+
+      <!-- Colonne Facture -->
+      <ng-container matColumnDef="factureId">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Facture</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <div class="client-info">
+            <mat-icon class="client-icon">receipt_long</mat-icon>
+            {{ r.factureId }}
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Colonne Montant -->
+      <ng-container matColumnDef="montant">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Montant</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <mat-icon class="client-icon">payments</mat-icon>
+          {{ r.montant | currency:r.modePaiement }}
+        </td>
+      </ng-container>
+
+      <!-- Colonne Date -->
+      <ng-container matColumnDef="dateReglement">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Date</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <mat-icon class="client-icon">event</mat-icon>
+          {{ r.dateReglement | date:'shortDate' }}
+        </td>
+      </ng-container>
+
+      <!-- Colonne Devise -->
+      <ng-container matColumnDef="modePaiement">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Devise</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <mat-icon class="client-icon">attach_money</mat-icon>
+          {{ r.modePaiement }}
+        </td>
+      </ng-container>
+
+      <!-- Colonne Référence -->
+      <ng-container matColumnDef="reference">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Référence</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <mat-icon class="client-icon">confirmation_number</mat-icon>
+          {{ r.reference || 'N/A' }}
+        </td>
+      </ng-container>
+
+      <!-- Colonne Statut -->
+      <ng-container matColumnDef="statut">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Statut</th>
+        <td mat-cell *matCellDef="let r" class="cell">
+          <mat-icon class="client-icon">info</mat-icon>
+          {{ r.statut }}
+        </td>
+      </ng-container>
+
+      <!-- Colonne Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+        <td mat-cell *matCellDef="let r" class="cell actions-cell">
+          <button mat-icon-button color="primary" (click)="viewReglement(r.id)" matTooltip="Voir détails">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="editReglement(r.id)" matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteReglement(r.id)" matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row"></tr>
+    </table>
+  </div>
+</div>
+
+<ng-template #loadingSpinner>
+  <div class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des règlements...</p>
+  </div>
+</ng-template>

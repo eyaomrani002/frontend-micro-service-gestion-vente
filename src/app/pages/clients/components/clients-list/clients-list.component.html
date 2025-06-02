@@ -1,0 +1,78 @@
+<div *ngIf="clients$ | async as clients; else loading" class="modern-container">
+  <div class="header-section">
+    <h2>Gestion des clients</h2>
+    <button mat-flat-button color="primary" [routerLink]="['/clients/create']" class="add-button">
+      <mat-icon>add</mat-icon>
+      Ajouter un client
+    </button>
+  </div>
+
+  <div class="table-container">
+    <table mat-table [dataSource]="clients" class="modern-table">
+      <!-- Colonne ID -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">ID</th>
+        <td mat-cell *matCellDef="let client" class="cell">{{ client.id }}</td>
+      </ng-container>
+
+      <!-- Colonne Nom -->
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Nom</th>
+        <td mat-cell *matCellDef="let client" class="cell">
+          <div class="client-info">
+            <mat-icon class="client-icon">person</mat-icon>
+            {{ client.name }}
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Colonne Email -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Email</th>
+        <td mat-cell *matCellDef="let client" class="cell">
+          <div class="client-info">
+            <mat-icon class="client-icon">email</mat-icon>
+            <a href="mailto:{{client.email}}" class="email-link">{{ client.email }}</a>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Colonne Adresse -->
+      <ng-container matColumnDef="adresse">
+        <th mat-header-cell *matHeaderCellDef class="header-cell">Adresse</th>
+        <td mat-cell *matCellDef="let client" class="cell">
+          <div class="client-info">
+            <mat-icon class="client-icon">location_on</mat-icon>
+            {{ client.adresse || 'Non renseignée' }}
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Colonne Actions -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+        <td mat-cell *matCellDef="let client" class="cell actions-cell">
+          <button mat-icon-button color="primary" [routerLink]="['/clients', client.id]" matTooltip="Voir détails">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" [routerLink]="['/clients/edit', client.id]" matTooltip="Modifier">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteClient(client.id)" matTooltip="Supprimer">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row"></tr>
+    </table>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données clients...</p>
+  </div>
+</ng-template>

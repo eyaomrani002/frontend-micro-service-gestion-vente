@@ -1,0 +1,56 @@
+<div class="modern-form-container accent-blue">
+  <div class="form-header">
+    <mat-icon class="header-icon">{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+    <h2>{{ isEditMode ? 'Modifier le client' : 'Nouveau client' }}</h2>
+  </div>
+
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" novalidate class="modern-form">
+    <!-- Champs du formulaire avec couleurs -->
+    <mat-form-field appearance="outline" class="form-field purple-field">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="name" required>
+      <mat-icon matSuffix>person</mat-icon>
+      <mat-error *ngIf="clientForm.get('name')?.invalid">
+        Le nom est obligatoire
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" required>
+      <mat-icon matSuffix>email</mat-icon>
+      <mat-error *ngIf="clientForm.get('email')?.invalid">
+        Veuillez entrer un email valide
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field green-field">
+      <mat-label>Adresse</mat-label>
+      <input matInput formControlName="adresse">
+      <mat-icon matSuffix>location_on</mat-icon>
+    </mat-form-field>
+
+    <!-- Messages avec couleurs -->
+    <div *ngIf="error" class="error-message coral-bg">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message mint-bg">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Boutons colorés -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || clientForm.invalid" class="primary-btn">
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+      </button>
+      <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="loading" class="secondary-btn">
+        <mat-icon>cancel</mat-icon>
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>

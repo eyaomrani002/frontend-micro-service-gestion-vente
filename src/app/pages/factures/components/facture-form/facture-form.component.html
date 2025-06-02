@@ -1,0 +1,135 @@
+<div class="modern-form-container accent-blue">
+  <div class="form-header">
+    <mat-icon class="header-icon">{{ isEdit ? 'edit' : 'request_quote' }}</mat-icon>
+    <h2>{{ isEdit ? 'Modifier la Facture' : 'Nouvelle Facture' }}</h2>
+  </div>
+
+  <form [formGroup]="factureForm" (ngSubmit)="submitForm()" novalidate class="modern-form">
+    <div class="client-group">
+      <mat-form-field appearance="outline" class="form-field purple-field">
+        <mat-label>Client</mat-label>
+        <mat-select formControlName="clientID" (selectionChange)="updateClientName()">
+          <mat-option *ngFor="let client of clients" [value]="client.id">
+            {{ client.name }} (ID: {{ client.id }})
+          </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>badge</mat-icon>
+        <mat-error *ngIf="factureForm.get('clientID')?.hasError('required')">Le client est obligatoire.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="form-field purple-field">
+        <mat-label>Nom du Client</mat-label>
+        <input matInput [value]="selectedClientName" readonly>
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Date</mat-label>
+      <input matInput formControlName="dateFacture" type="date">
+      <mat-icon matSuffix>event</mat-icon>
+      <mat-error *ngIf="factureForm.get('dateFacture')?.hasError('required')">La date est obligatoire.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field green-field">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="status">
+        <mat-option value="PAYEE">Payée</mat-option>
+        <mat-option value="PARTIELLEMENT_PAYEE">Partiellement Payée</mat-option>
+        <mat-option value="NON_PAYEE">Non Payée</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>fact_check</mat-icon>
+      <mat-error *ngIf="factureForm.get('status')?.hasError('required')">Le statut est obligatoire.</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field purple-field">
+      <mat-label>Total</mat-label>
+      <input matInput formControlName="total" type="number" readonly>
+      <mat-icon matSuffix>payments</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Reste à payer</mat-label>
+      <input matInput formControlName="resteAPayer" type="number" readonly>
+      <mat-icon matSuffix>hourglass_bottom</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field green-field">
+      <mat-label>Montant Payé</mat-label>
+      <input matInput formControlName="montantPaye" type="number" min="0" [disabled]="factureForm.get('montantPaye')?.disabled ?? false">
+      <mat-icon matSuffix>paid</mat-icon>
+      <mat-error *ngIf="factureForm.get('montantPaye')?.hasError('required')">Le montant payé est obligatoire.</mat-error>
+      <mat-error *ngIf="factureForm.get('montantPaye')?.hasError('min')">Le montant payé doit être positif.</mat-error>
+      <mat-error *ngIf="factureForm.get('montantPaye')?.hasError('max')">Ne peut pas dépasser le total.</mat-error>
+    </mat-form-field>
+
+    <h3>Lignes de Facture</h3>
+    <div formArrayName="factureLignes">
+      <div *ngFor="let ligne of factureLignes.controls; let i = index" [formGroupName]="i" class="ligne-group">
+        <mat-form-field appearance="outline">
+          <mat-label>Produit</mat-label>
+          <mat-select formControlName="produitID" (selectionChange)="updateProduit(i)">
+            <mat-option *ngFor="let produit of produits" [value]="produit.id" [disabled]="produit.quantity === 0">
+              {{ produit.name }} (ID: {{ produit.id }}, Stock: {{ produit.quantity }})
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>inventory</mat-icon>
+          <mat-error *ngIf="ligne.get('produitID')?.hasError('required')">Le produit est obligatoire.</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Nom du Produit</mat-label>
+          <input matInput [value]="getProduitName(i)" readonly>
+          <mat-icon matSuffix>label</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Quantité</mat-label>
+          <input matInput formControlName="quantity" type="number" (input)="updateTotal()" [max]="getMaxQuantity(i)" min="1">
+          <mat-icon matSuffix>numbers</mat-icon>
+          <mat-error *ngIf="ligne.get('quantity')?.hasError('required')">La quantité est obligatoire.</mat-error>
+          <mat-error *ngIf="ligne.get('quantity')?.hasError('min')">La quantité doit être positive.</mat-error>
+          <mat-error *ngIf="ligne.get('quantity')?.value > getMaxQuantity(i)">Stock insuffisant (max: {{ getMaxQuantity(i) }})</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Prix Unitaire</mat-label>
+          <input matInput formControlName="price" type="number" readonly>
+          <mat-icon matSuffix>euro</mat-icon>
+        </mat-form-field>
+
+        <button mat-icon-button color="warn" type="button" (click)="removeFactureLigne(i)" matTooltip="Supprimer la ligne">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+      <mat-error *ngIf="factureForm.get('factureLignes')?.hasError('minFactureLignes') && factureForm.get('factureLignes')?.touched">
+        Au moins une ligne de facture est requise.
+      </mat-error>
+    </div>
+
+    <button mat-stroked-button type="button" (click)="addFactureLigne()" class="add-ligne-button">
+      <mat-icon>add</mat-icon> Ajouter une ligne
+    </button>
+
+    <div *ngIf="error" class="error-message coral-bg">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message mint-bg">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="loading || !factureForm.valid" class="primary-btn">
+        <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
+        {{ isEdit ? 'Enregistrer' : 'Créer' }}
+      </button>
+      <button mat-stroked-button type="button" [routerLink]="['/factures']" class="secondary-btn">
+        <mat-icon>cancel</mat-icon>
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>

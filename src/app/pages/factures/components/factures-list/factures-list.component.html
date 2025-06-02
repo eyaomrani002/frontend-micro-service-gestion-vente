@@ -1,0 +1,121 @@
+<div *ngIf="loading; else factureContent" class="loading-container">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Chargement des factures...</p>
+</div>
+
+<ng-template #factureContent>
+  <div class="modern-container">
+    <div class="header-section">
+      <h2>Liste des factures</h2>
+      <div>
+        <button mat-flat-button color="primary" [routerLink]="['/factures/create']" class="add-button">
+          <mat-icon>add</mat-icon>
+          Ajouter une facture
+        </button>
+        <button mat-flat-button color="accent" [routerLink]="['/produits']" class="add-button">
+          <mat-icon>shopping_cart</mat-icon>
+          Gérer les produits
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="errorMessage" class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <p>{{ errorMessage }}</p>
+      <button mat-stroked-button (click)="loadFactures()">Réessayer</button>
+    </div>
+
+    <div *ngIf="!errorMessage && hasData" class="table-container">
+      <table mat-table [dataSource]="dataSource" class="modern-table">
+        <!-- ID -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">ID</th>
+          <td mat-cell *matCellDef="let facture" class="cell">{{ facture.id }}</td>
+        </ng-container>
+
+        <!-- Client ID -->
+        <ng-container matColumnDef="clientID">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Client</th>
+          <td mat-cell *matCellDef="let facture" class="cell">{{ facture.clientID }}</td>
+        </ng-container>
+
+        <!-- Date Facture -->
+        <ng-container matColumnDef="dateFacture">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Date</th>
+          <td mat-cell *matCellDef="let facture" class="cell">
+            {{ facture.dateFacture ? (facture.dateFacture | date:'dd/MM/yyyy') : 'Non définie' }}
+          </td>
+        </ng-container>
+
+        <!-- Statut -->
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Statut</th>
+          <td mat-cell *matCellDef="let facture" class="cell">
+            <span [ngClass]="{
+              'status-payee': facture.status === 'PAYEE',
+              'status-partielle': facture.status === 'PARTIELLEMENT_PAYEE',
+              'status-non-payee': facture.status === 'NON_PAYEE'
+            }">
+              {{ facture.status }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Total -->
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Total</th>
+          <td mat-cell *matCellDef="let facture" class="cell">
+            {{ facture.total | currency:'TND' }}
+          </td>
+        </ng-container>
+
+        <!-- Montant Payé -->
+        <ng-container matColumnDef="montantPaye">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Payé</th>
+          <td mat-cell *matCellDef="let facture" class="cell">
+            {{ facture.montantPaye | currency:'TND' }}
+          </td>
+        </ng-container>
+
+        <!-- Reste à Payer -->
+        <ng-container matColumnDef="resteAPayer">
+          <th mat-header-cell *matHeaderCellDef class="header-cell">Reste</th>
+          <td mat-cell *matCellDef="let facture" class="cell">
+            {{ facture.resteAPayer | currency:'TND' }}
+          </td>
+        </ng-container>
+
+        <!-- Actions -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+          <td mat-cell *matCellDef="let facture" class="cell actions-cell">
+            <button mat-icon-button color="primary" [routerLink]="['/factures', facture.id]" matTooltip="Voir détails">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" [routerLink]="['/factures/edit', facture.id]" matTooltip="Modifier">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteFacture(facture.id)" matTooltip="Supprimer">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="printFacture(facture.id)" matTooltip="Imprimer">
+              <mat-icon>print</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" (click)="downloadFactureAsPDF(facture.id)" matTooltip="Télécharger PDF">
+              <mat-icon>download</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <!-- Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns" class="header-row"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="row"></tr>
+      </table>
+    </div>
+
+    <div *ngIf="!errorMessage && !hasData" class="empty-state">
+      <mat-icon class="empty-icon">receipt</mat-icon>
+      <p>Aucune facture disponible. <a [routerLink]="['/factures/create']">Ajoutez une facture</a>.</p>
+    </div>
+  </div>
+</ng-template>

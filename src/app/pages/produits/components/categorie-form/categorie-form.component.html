@@ -1,0 +1,70 @@
+<div class="modern-form-container accent-blue">
+  <div class="form-header">
+    <mat-icon class="header-icon">{{ isEditMode ? 'edit' : 'add_category' }}</mat-icon>
+    <h2>{{ isEditMode ? 'Modifier la catégorie' : 'Nouvelle catégorie' }}</h2>
+  </div>
+
+  <form [formGroup]="categorieForm" (ngSubmit)="onSubmit()" novalidate class="modern-form">
+    
+    <!-- Nom -->
+    <mat-form-field appearance="outline" class="form-field purple-field">
+      <mat-label>Nom</mat-label>
+      <input matInput formControlName="name" required [disabled]="loading" />
+      <mat-icon matSuffix>category</mat-icon>
+      <mat-error *ngIf="categorieForm.get('name')?.hasError('required')">
+        Le nom est obligatoire
+      </mat-error>
+      <mat-error *ngIf="categorieForm.get('name')?.hasError('minlength')">
+        Le nom doit contenir au moins 2 caractères
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Description (facultatif) -->
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="4" [disabled]="loading"></textarea>
+      <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <!-- Messages -->
+    <div *ngIf="error" class="error-message coral-bg">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+      <span *ngIf="errorDetails" class="error-details">{{ errorDetails }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message mint-bg">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Boutons -->
+    <div class="form-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="loading || categorieForm.invalid"
+        class="primary-btn"
+      >
+        <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+        {{ isEditMode ? 'Enregistrer' : 'Créer' }}
+      </button>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="loading"
+        class="secondary-btn"
+      >
+        <mat-icon>cancel</mat-icon>
+        Annuler
+      </button>
+    </div>
+
+    <!-- Spinner de chargement -->
+    <div *ngIf="loading" class="loading-spinner">
+      <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+    </div>
+  </form>
+</div>

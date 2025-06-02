@@ -1,0 +1,88 @@
+<div class="modern-form-container accent-blue">
+  <div class="form-header">
+    <mat-icon class="header-icon">{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
+    <h2>{{ isEdit ? 'Modifier le règlement' : 'Nouveau règlement' }}</h2>
+  </div>
+
+  <form [formGroup]="reglementForm" (ngSubmit)="submitForm()" *ngIf="!loading; else loadingSpinner" class="modern-form">
+
+    <mat-form-field appearance="outline" class="form-field purple-field">
+      <mat-label>Facture</mat-label>
+      <mat-select formControlName="factureId">
+        <mat-option *ngFor="let facture of factures" [value]="facture.id">
+          {{ facture.id }} - {{ facture.client.name || 'Client inconnu' }} ({{ facture.total | currency:'TND' }})
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="reglementForm.get('factureId')?.hasError('required')">Facture obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field teal-field">
+      <mat-label>Montant</mat-label>
+      <input matInput formControlName="montant" type="number" min="0.01">
+      <mat-icon matSuffix>attach_money</mat-icon>
+      <mat-error *ngIf="reglementForm.get('montant')?.hasError('required')">Montant obligatoire</mat-error>
+      <mat-error *ngIf="reglementForm.get('montant')?.hasError('min')">Doit être positif</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field green-field">
+      <mat-label>Date de règlement</mat-label>
+      <input matInput formControlName="dateReglement" type="date">
+      <mat-icon matSuffix>event</mat-icon>
+      <mat-error *ngIf="reglementForm.get('dateReglement')?.hasError('required')">Date obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field blue-field">
+      <mat-label>Devise</mat-label>
+      <mat-select formControlName="modePaiement">
+        <mat-option *ngFor="let devise of devises" [value]="devise">{{ devise }}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>payments</mat-icon>
+      <mat-error *ngIf="reglementForm.get('modePaiement')?.hasError('required')">Devise obligatoire</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field yellow-field">
+      <mat-label>Référence</mat-label>
+      <input matInput formControlName="reference">
+      <mat-icon matSuffix>receipt</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="form-field orange-field">
+      <mat-label>Statut</mat-label>
+      <mat-select formControlName="statut">
+        <mat-option *ngFor="let statut of statuts" [value]="statut">{{ statut }}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>flag</mat-icon>
+      <mat-error *ngIf="reglementForm.get('statut')?.hasError('required')">Statut obligatoire</mat-error>
+    </mat-form-field>
+
+    <!-- Messages de succès/erreur -->
+    <div *ngIf="error" class="error-message coral-bg">
+      <mat-icon>error</mat-icon>
+      <span>{{ error }}</span>
+    </div>
+
+    <div *ngIf="successMessage" class="success-message mint-bg">
+      <mat-icon>check_circle</mat-icon>
+      <span>{{ successMessage }}</span>
+    </div>
+
+    <!-- Boutons -->
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="reglementForm.invalid || loading" class="primary-btn">
+        <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
+        {{ isEdit ? 'Enregistrer' : 'Créer' }}
+      </button>
+      <button mat-stroked-button type="button" [routerLink]="['/reglements']" class="secondary-btn">
+        <mat-icon>cancel</mat-icon>
+        Annuler
+      </button>
+    </div>
+  </form>
+
+  <ng-template #loadingSpinner>
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Chargement du formulaire...</p>
+    </div>
+  </ng-template>
+</div>

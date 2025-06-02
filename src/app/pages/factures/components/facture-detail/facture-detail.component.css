@@ -1,0 +1,273 @@
+.container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.error-container {
+  display: flex;
+  align-items: center;
+  background: #f8d7da;
+  color: #721c24;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.error-icon {
+  margin-right: 10px;
+}
+
+.facture-details mat-card {
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+mat-card-title {
+  font-size: 24px;
+  color: #333;
+}
+
+mat-card-content p {
+  margin: 10px 0;
+}
+
+mat-card-content h3 {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #333;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.modern-table th, .modern-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.modern-table th {
+  background: #f2f4f4;
+  font-weight: 600;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+mat-card-actions button {
+  margin-left: 10px;
+}
+
+.status-payee {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.status-partielle {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.status-non-payee {
+  color: #dc3545;
+  font-weight: bold;
+}
+/* Style commun */
+.modern-form-container, .modern-detail-container {
+  max-width: 800px;
+  margin: 24px auto;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* En-têtes */
+.form-header, .detail-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32px;
+  
+  h2 {
+    color: #2c3e50;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+.header-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+  margin-right: 16px;
+  color: #3498db;
+}
+
+/* Formulaire */
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-field {
+  width: 100%;
+  
+  mat-icon {
+    color: #7f8c8d;
+  }
+}
+
+/* Cartes de détail */
+.detail-card {
+  margin-bottom: 24px;
+  border-radius: 8px;
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 16px 0;
+  border-bottom: 1px solid #f0f0f0;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.detail-icon {
+  color: #7f8c8d;
+  margin-right: 16px;
+  margin-top: 4px;
+}
+
+.detail-content {
+  flex: 1;
+  
+  h3 {
+    margin: 0 0 4px 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #7f8c8d;
+  }
+  
+  .detail-value {
+    font-size: 16px;
+    color: #2c3e50;
+  }
+  
+  a.detail-value {
+    color: #3498db;
+    text-decoration: none;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+/* Messages d'état */
+.error-message, .success-message {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 16px 0;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+}
+
+.error-message {
+  background-color: #fdecea;
+  color: #d32f2f;
+}
+
+.success-message {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Actions */
+.form-actions, .detail-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+  
+  button {
+    flex: 1;
+    
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+/* États de chargement */
+.loading-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  text-align: center;
+  
+  mat-icon, mat-spinner {
+    margin-bottom: 16px;
+  }
+}
+
+.error-container {
+  mat-icon {
+    color: #d32f2f;
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+  }
+  
+  h3 {
+    color: #d32f2f;
+    margin-bottom: 8px;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .modern-form-container, .modern-detail-container {
+    padding: 16px;
+    margin: 16px;
+  }
+  
+  .form-actions, .detail-actions {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+  
+}

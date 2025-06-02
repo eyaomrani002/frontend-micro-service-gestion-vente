@@ -1,0 +1,45 @@
+<div class="conversion-container">
+  <h2>Convertisseur de Devises</h2>
+
+  <form (ngSubmit)="convert()" #conversionForm="ngForm" class="conversion-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Montant</mat-label>
+      <input matInput type="number" [(ngModel)]="montant" name="montant" required min="0.01">
+      <mat-error *ngIf="conversionForm.submitted && !montant">Montant requis</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>De</mat-label>
+      <mat-select [(ngModel)]="from" name="from" required>
+        <mat-option *ngFor="let devise of devises" [value]="devise.code">{{ devise.code }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="conversionForm.submitted && !from">Devise source requise</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Vers</mat-label>
+      <mat-select [(ngModel)]="to" name="to" required>
+        <mat-option *ngFor="let devise of devises" [value]="devise.code">{{ devise.code }}</mat-option>
+      </mat-select>
+      <mat-error *ngIf="conversionForm.submitted && !to">Devise cible requise</mat-error>
+    </mat-form-field>
+
+    <div class="conversion-actions">
+      <button mat-raised-button color="primary" type="submit" [disabled]="!montant || !from || !to">
+        <mat-icon>swap_horiz</mat-icon> Convertir
+      </button>
+      <button mat-stroked-button color="warn" type="button" routerLink="/devises">
+        <mat-icon>arrow_back</mat-icon> Annuler
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon color="warn">error</mat-icon> {{ error }}
+  </div>
+
+  <div *ngIf="result !== undefined && !error" class="result-message">
+    <mat-icon color="primary">check_circle</mat-icon>
+    Résultat : {{ result | number:'1.2-2' }} {{ to }}
+  </div>
+</div>

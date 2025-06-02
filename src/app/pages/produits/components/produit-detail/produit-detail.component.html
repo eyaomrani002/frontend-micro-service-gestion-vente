@@ -1,0 +1,98 @@
+<div class="modern-detail-container" *ngIf="!loading && produit; else loadingOrError">
+  <div class="detail-header">
+    <mat-icon class="header-icon">shopping_cart</mat-icon>
+    <h2>{{ produit.name }}</h2>
+  </div>
+
+  <mat-tab-group>
+    <!-- Onglet Détails -->
+    <mat-tab label="Détails">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">attach_money</mat-icon>
+            <div class="detail-content">
+              <h3>Prix</h3>
+              <p class="detail-value">{{ produit.price | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">inventory</mat-icon>
+            <div class="detail-content">
+              <h3>Quantité</h3>
+              <p class="detail-value" [ngClass]="{'low-stock': produit.quantity < 10}">
+                {{ produit.quantity }} {{ produit.quantity < 10 ? '(Rupture imminente)' : '' }}
+              </p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">category</mat-icon>
+            <div class="detail-content">
+              <h3>Catégorie</h3>
+              <p class="detail-value">{{ produit.categorie?.name || 'Non assignée' }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+
+    <!-- Onglet Statistiques -->
+    <mat-tab label="Statistiques">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">trending_up</mat-icon>
+            <div class="detail-content">
+              <h3>Ventes totales</h3>
+              <p class="detail-value">{{ ventesTotales }} unités</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">warning</mat-icon>
+            <div class="detail-content">
+              <h3>État du stock</h3>
+              <p class="detail-value">{{ produit.quantity === 0 ? 'En rupture' : produit.quantity < 10 ? 'Stock faible' : 'Stock suffisant' }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <h3>Clients ayant commandé ce produit</h3>
+      <table mat-table [dataSource]="clientsCommandant" class="modern-table">
+        <ng-container matColumnDef="clientName">
+          <th mat-header-cell *matHeaderCellDef>Client</th>
+          <td mat-cell *matCellDef="let item">{{ item.clientName }}</td>
+        </ng-container>
+        <ng-container matColumnDef="quantite">
+          <th mat-header-cell *matHeaderCellDef>Quantité</th>
+          <td mat-cell *matCellDef="let item">{{ item.quantite }}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="['clientName', 'quantite']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['clientName', 'quantite'];"></tr>
+      </table>
+    </mat-tab>
+  </mat-tab-group>
+
+  <div class="detail-actions">
+    <button mat-raised-button color="accent" (click)="goToEdit()">
+      <mat-icon>edit</mat-icon>
+      Modifier
+    </button>
+    <button mat-stroked-button (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Retour
+    </button>
+  </div>
+</div>
+
+<ng-template #loadingOrError>
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données produit...</p>
+  </div>
+  <div *ngIf="error" class="error-container">
+    <mat-icon class="error-icon">error</mat-icon>
+    <h3>Une erreur est survenue</h3>
+    <p>{{ error }}</p>
+  </div>
+</ng-template>
