@@ -197,5 +197,44 @@ export class FactureService {
     const token = localStorage.getItem('accessToken');
     return token ? { 'Authorization': `Bearer ${token}` } : {};
   }
+
+  getChiffreAffairesByClient(clientId: number): Observable<number> {
+    return this.http.get<number>(`http://localhost:8888/facture-service/factures/client/${clientId}/total`, { headers: this.getAuthHeaders() });
+  }
+
+  getResteAPayerByClient(clientId: number): Observable<number> {
+    return this.http.get<number>(`http://localhost:8888/facture-service/factures/client/${clientId}/reste-a-payer`, { headers: this.getAuthHeaders() });
+  }
+
+  getFacturesRegleesByClient(clientId: number): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`http://localhost:8888/facture-service/factures/stats/reglees/${clientId}`, { headers: this.getAuthHeaders() });
+  }
+
+  getFacturesNonRegleesByClient(clientId: number): Observable<Facture[]> {
+    return this.http.get<Facture[]>(`http://localhost:8888/facture-service/factures/stats/non-reglees/${clientId}`, { headers: this.getAuthHeaders() });
+  }
+
+  getProduitsSollicitesByClient(clientId: number, limit: number = 5): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8888/facture-service/factures/lignes/client/${clientId}/produits?limit=${limit}`, { headers: this.getAuthHeaders() });
+  }
+
+  getVentesTotalesByProduit(produitId: number): Observable<number> {
+    return this.http.get<number>(`http://localhost:8888/facture-service/factures/lignes/produit/${produitId}/quantite`, { headers: this.getAuthHeaders() });
+  }
+
+  getClientsCommandantProduit(produitId: number): Observable<any[]> {
+    return this.http.get<any[]>(`http://localhost:8888/facture-service/factures/lignes/produit/${produitId}/clients`, { headers: this.getAuthHeaders() });
+  }
   
+  // Statistiques réelles pour une facture (exemple: total, payé, reste à payer, nombre de lignes, etc.)
+  getFactureStats(id: number): Observable<{ total: number, montantPaye: number, resteAPayer: number, lignes: number }> {
+    return this.getFacture(id).pipe(
+      map(facture => ({
+        total: facture.total || 0,
+        montantPaye: facture.montantPaye || 0,
+        resteAPayer: facture.resteAPayer || 0,
+        lignes: facture.factureLignes ? facture.factureLignes.length : 0
+      }))
+    );
+  }
 }

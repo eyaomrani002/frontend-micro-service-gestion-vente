@@ -78,10 +78,10 @@
           <button mat-icon-button color="primary" (click)="viewReglement(r.id)" matTooltip="Voir détails">
             <mat-icon>visibility</mat-icon>
           </button>
-          <button mat-icon-button color="accent" (click)="editReglement(r.id)" matTooltip="Modifier">
+          <button *ngIf="role === 'ADMIN'" mat-icon-button color="accent" (click)="editReglement(r.id)" matTooltip="Modifier">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="deleteReglement(r.id)" matTooltip="Supprimer">
+          <button *ngIf="role === 'ADMIN'" mat-icon-button color="warn" (click)="deleteReglement(r.id)" matTooltip="Supprimer">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

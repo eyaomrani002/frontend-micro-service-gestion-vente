@@ -221,9 +221,13 @@ export class FactureFormComponent implements OnInit {
       montantPayeControl?.setValue(0);
       montantPayeControl?.clearValidators();
     } else if (status === 'PAYEE') {
-      montantPayeControl?.disable();
+      montantPayeControl?.enable();
       montantPayeControl?.setValue(totalControl?.value || 0);
-      montantPayeControl?.clearValidators();
+      montantPayeControl?.setValidators([
+        Validators.required,
+        Validators.min(0),
+        Validators.max(totalControl?.value || Infinity)
+      ]);
     } else if (status === 'PARTIELLEMENT_PAYEE') {
       montantPayeControl?.enable();
       montantPayeControl?.setValidators([

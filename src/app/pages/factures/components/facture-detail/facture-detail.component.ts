@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { CommonModule } from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
-
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-facture-detail',
@@ -31,25 +31,31 @@ import { ToastrService } from 'ngx-toastr';
     MatTabsModule,
     FormsModule,
     MatTableModule,
-    RouterModule
+    RouterModule,
+    MatTableModule,
+
   ],
   templateUrl: './facture-detail.component.html',
   styleUrls: ['./facture-detail.component.css']
 })
 export class FactureDetailComponent implements OnInit {
   facture: Facture | null = null;
+  factureStats: { total: number, montantPaye: number, resteAPayer: number, lignes: number } | null = null;
   ligneColumns: string[] = ['produitID', 'quantity', 'price', 'total'];
   loading = false;
   errorMessage = '';
+  role: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private factureService: FactureService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
+    this.role = this.authService.getRole();
     this.loadFacture(id);
   }
 
@@ -60,6 +66,7 @@ export class FactureDetailComponent implements OnInit {
       next: (facture) => {
         this.facture = facture;
         this.loading = false;
+        this.factureService.getFactureStats(id).subscribe(stats => this.factureStats = stats);
       },
       error: (err) => {
         console.error('Erreur chargement:', err);

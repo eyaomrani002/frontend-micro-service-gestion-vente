@@ -11,6 +11,7 @@ import { Produit } from '../../models/produit.model';
 import { ProduitService } from '../../services/produit.service';
 import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-produits-list',
@@ -34,10 +35,12 @@ export class ProduitsListComponent implements OnInit, OnDestroy {
   errorMessage = '';
   hasData = false;
   private subscription: Subscription = new Subscription();
+  role: string | null = null;
 
-  constructor(private produitService: ProduitService, private toastr: ToastrService) { }
+  constructor(private produitService: ProduitService, private toastr: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.loadProduits();
   }
 

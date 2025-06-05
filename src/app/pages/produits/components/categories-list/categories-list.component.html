@@ -7,7 +7,7 @@
   <div class="modern-container">
     <div class="header-section">
       <h2>Gestion des catégories</h2>
-      <button mat-flat-button color="primary" [routerLink]="['/produits/categories/create']" class="add-button">
+      <button *ngIf="role === 'ADMIN'" mat-flat-button color="primary" [routerLink]="['/produits/categories/create']" class="add-button">
         <mat-icon>add</mat-icon>
         Ajouter une catégorie
       </button>
@@ -49,10 +49,10 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
           <td mat-cell *matCellDef="let cat" class="cell actions-cell">
-            <button mat-icon-button color="accent" [routerLink]="['/produits/categories/edit', cat.id]" matTooltip="Modifier">
+            <button *ngIf="role === 'ADMIN'" mat-icon-button color="accent" [routerLink]="['/produits/categories/edit', cat.id]" matTooltip="Modifier">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="deleteCategorie(cat.id)" matTooltip="Supprimer">
+            <button *ngIf="role === 'ADMIN'" mat-icon-button color="warn" (click)="deleteCategorie(cat.id)" matTooltip="Supprimer">
               <mat-icon>delete</mat-icon>
             </button>
           </td>
@@ -65,7 +65,11 @@
 
     <div *ngIf="!errorMessage && !hasData" class="empty-state">
       <mat-icon class="empty-icon">category</mat-icon>
-      <p>Aucune catégorie disponible. <a [routerLink]="['/produits/categories/create']">Ajoutez-en une</a>.</p>
+      <p>Aucune catégorie disponible.
+        <span *ngIf="role === 'ADMIN'">
+          <a [routerLink]="['/produits/categories/create']">Ajoutez-en une</a>.
+        </span>
+      </p>
     </div>
   </div>
 </ng-template>

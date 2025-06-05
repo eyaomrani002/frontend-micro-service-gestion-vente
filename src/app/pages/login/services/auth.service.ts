@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root'
@@ -106,5 +107,22 @@ export class AuthService {
           throw error;
         })
       );
+  }
+
+  /**
+   * Retourne le rôle de l'utilisateur courant à partir du JWT (accessToken)
+   */
+  getRole(): string | null {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return null;
+    try {
+      const decoded: any = jwtDecode(token);
+      // Adaptez selon la structure de votre JWT (ex: decoded.role, decoded.roles, etc.)
+      if (decoded.role) return decoded.role;
+      if (decoded.roles && Array.isArray(decoded.roles)) return decoded.roles[0];
+      return null;
+    } catch (e) {
+      return null;
+    }
   }
 }

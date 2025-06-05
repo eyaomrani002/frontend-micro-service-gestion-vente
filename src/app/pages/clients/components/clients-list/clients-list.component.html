@@ -1,7 +1,8 @@
 <div *ngIf="clients$ | async as clients; else loading" class="modern-container">
   <div class="header-section">
     <h2>Gestion des clients</h2>
-    <button mat-flat-button color="primary" [routerLink]="['/clients/create']" class="add-button">
+    <!-- Bouton Ajouter visible seulement pour ADMIN -->
+    <button *ngIf="role === 'ADMIN'" mat-flat-button color="primary" [routerLink]="['/clients/create']" class="add-button">
       <mat-icon>add</mat-icon>
       Ajouter un client
     </button>
@@ -55,10 +56,11 @@
           <button mat-icon-button color="primary" [routerLink]="['/clients', client.id]" matTooltip="Voir détails">
             <mat-icon>visibility</mat-icon>
           </button>
-          <button mat-icon-button color="accent" [routerLink]="['/clients/edit', client.id]" matTooltip="Modifier">
+          <!-- Boutons Modifier et Supprimer visibles seulement pour ADMIN -->
+          <button *ngIf="role === 'ADMIN'" mat-icon-button color="accent" [routerLink]="['/clients/edit', client.id]" matTooltip="Modifier">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button color="warn" (click)="deleteClient(client.id)" matTooltip="Supprimer">
+          <button *ngIf="role === 'ADMIN'" mat-icon-button color="warn" (click)="deleteClient(client.id)" matTooltip="Supprimer">
             <mat-icon>delete</mat-icon>
           </button>
         </td>

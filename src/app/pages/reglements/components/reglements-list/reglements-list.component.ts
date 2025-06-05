@@ -15,6 +15,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Facture } from '../../../factures/models/facture.model';
 import { MatTableModule } from '@angular/material/table';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-reglements-list',
@@ -40,14 +41,17 @@ export class ReglementsListComponent implements OnInit {
   pageIndex: number = 0;
   displayedColumns: string[] = ['id', 'factureId', 'montant', 'dateReglement', 'modePaiement', 'reference', 'statut', 'actions'];
   loading: boolean = false;
+  role: string | null = null;
 
   constructor(
     private reglementService: ReglementService,
     private router: Router,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.loadReglements();
   }
 

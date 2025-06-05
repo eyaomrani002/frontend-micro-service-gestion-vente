@@ -8,7 +8,7 @@
     <div class="header-section">
       <h2>Liste des factures</h2>
       <div>
-        <button mat-flat-button color="primary" [routerLink]="['/factures/create']" class="add-button">
+        <button *ngIf="role === 'ADMIN'" mat-flat-button color="primary" [routerLink]="['/factures/create']" class="add-button">
           <mat-icon>add</mat-icon>
           Ajouter une facture
         </button>
@@ -92,10 +92,10 @@
             <button mat-icon-button color="primary" [routerLink]="['/factures', facture.id]" matTooltip="Voir détails">
               <mat-icon>visibility</mat-icon>
             </button>
-            <button mat-icon-button color="accent" [routerLink]="['/factures/edit', facture.id]" matTooltip="Modifier">
+            <button *ngIf="role === 'ADMIN'"mat-icon-button color="accent" [routerLink]="['/factures/edit', facture.id]" matTooltip="Modifier">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" (click)="deleteFacture(facture.id)" matTooltip="Supprimer">
+            <button *ngIf="role === 'ADMIN'"mat-icon-button color="warn" (click)="deleteFacture(facture.id)" matTooltip="Supprimer">
               <mat-icon>delete</mat-icon>
             </button>
             <button mat-icon-button color="primary" (click)="printFacture(facture.id)" matTooltip="Imprimer">

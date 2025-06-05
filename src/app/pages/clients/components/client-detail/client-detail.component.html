@@ -91,7 +91,7 @@
   </mat-tab-group>
 
   <div class="detail-actions">
-    <button mat-raised-button color="accent" (click)="goToEdit()">
+    <button *ngIf="role === 'ADMIN'" mat-raised-button color="accent" (click)="goToEdit()">
       <mat-icon>edit</mat-icon>
       Modifier
     </button>

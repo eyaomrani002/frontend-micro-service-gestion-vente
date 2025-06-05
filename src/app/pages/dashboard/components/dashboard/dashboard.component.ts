@@ -20,6 +20,7 @@ import { NgChartsModule } from 'ng2-charts';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -48,6 +49,7 @@ export class DashboardComponent implements OnInit {
   paymentRate: { paidPercentage: number, pendingPercentage: number } = { paidPercentage: 0, pendingPercentage: 0 };
   growthRate: number | null = null;
   growthPeriod: 'mois' | 'an' | null = null;
+  role: string | null = null;
 
   // Table data sources
   topClientsDataSource = new MatTableDataSource<{ clientId: number, clientNom: string, chiffreAffaires: number }>();
@@ -84,10 +86,12 @@ export class DashboardComponent implements OnInit {
     private clientService: ClientService,
     private produitService: ProduitService,
     private reglementService: ReglementService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.updateDashboard();
   }
 

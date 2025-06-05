@@ -1,37 +1,64 @@
-<div class="devise-detail-container" *ngIf="devise">
-  <h2>Détails de la Devise <span class="code">{{ devise.code }}</span></h2>
+<div class="modern-detail-container" *ngIf="devise; else loadingOrError">
+  <div class="detail-header">
+    <mat-icon class="header-icon">payments</mat-icon>
+    <h2>Détails de la Devise</h2>
+  </div>
 
-  <mat-card class="devise-card">
-    <mat-card-content>
-      <div class="detail-row">
-        <mat-icon class="detail-icon">code</mat-icon>
-        <span><strong>Code:</strong> {{ devise.code }}</span>
-      </div>
-      <div class="detail-row">
-        <mat-icon class="detail-icon">label</mat-icon>
-        <span><strong>Nom:</strong> {{ devise.name }}</span>
-      </div>
-      <div class="detail-row">
-        <mat-icon class="detail-icon">attach_money</mat-icon>
-        <span><strong>Taux de Change:</strong> {{ devise.tauxChange | number:'1.4-4' }}</span>
-      </div>
-      <div class="detail-row">
-        <mat-icon class="detail-icon">check_circle</mat-icon>
-        <span><strong>Devise de Référence:</strong> {{ devise.deviseReference ? 'Oui' : 'Non' }}</span>
-      </div>
-    </mat-card-content>
+  <mat-tab-group>
+    <mat-tab label="Informations">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">code</mat-icon>
+            <div class="detail-content">
+              <h3>Code</h3>
+              <p class="detail-value">{{ devise.code }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">label</mat-icon>
+            <div class="detail-content">
+              <h3>Nom</h3>
+              <p class="detail-value">{{ devise.name }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">attach_money</mat-icon>
+            <div class="detail-content">
+              <h3>Taux de Change</h3>
+              <p class="detail-value">{{ devise.tauxChange | number:'1.4-4' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">check_circle</mat-icon>
+            <div class="detail-content">
+              <h3>Devise de Référence</h3>
+              <p class="detail-value">{{ devise.deviseReference ? 'Oui' : 'Non' }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
+  </mat-tab-group>
 
-    <mat-card-actions class="action-buttons">
-      <button mat-raised-button color="primary" [routerLink]="['/devises/edit', devise.id]">
-        <mat-icon>edit</mat-icon> Modifier
-      </button>
-      <button mat-stroked-button color="warn" [routerLink]="['/devises']">
-        <mat-icon>arrow_back</mat-icon> Retour
-      </button>
-    </mat-card-actions>
-  </mat-card>
+  <div class="detail-actions">
+    <button *ngIf="role === 'ADMIN'" mat-raised-button color="primary" [routerLink]="['/devises/edit', devise.id]">
+      <mat-icon>edit</mat-icon> Modifier
+    </button>
+    <button mat-stroked-button color="warn" [routerLink]="['/devises']">
+      <mat-icon>arrow_back</mat-icon> Retour
+    </button>
+  </div>
 </div>
 
-<div *ngIf="error" class="error-message">
-  <mat-icon color="warn">error</mat-icon> {{ error }}
-</div>
+<ng-template #loadingOrError>
+  <div class="loading-container">
+    <mat-spinner diameter="50" *ngIf="!devise && !error"></mat-spinner>
+    <p *ngIf="!devise && !error">Chargement des données de la devise...</p>
+    <div *ngIf="error" class="error-container">
+      <mat-icon class="error-icon">error</mat-icon>
+      <h3>Une erreur est survenue</h3>
+      <p>{{ error }}</p>
+    </div>
+  </div>
+</ng-template>

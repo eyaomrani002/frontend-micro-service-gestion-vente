@@ -13,6 +13,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
+import { AuthService } from '../../../login/services/auth.service';
+import { FactureService } from '../../../factures/services/facture.service';
 
 @Component({
   selector: 'app-produit-detail',
@@ -37,21 +39,26 @@ export class ProduitDetailComponent implements OnInit {
   loading = false;
   error = '';
   ventesTotales: number = 0;
-clientsCommandant: any;
+  clientsCommandant: any[] = [];
+  role: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private produitService: ProduitService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private factureService: FactureService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.role = this.authService.getRole();
     if (!id) {
       this.error = 'ID produit invalide';
       return;
     }
     this.loadProduit(id);
+    this.loadStats(id);
   }
 
   loadProduit(id: number): void {
@@ -60,16 +67,17 @@ clientsCommandant: any;
       next: (data) => {
         this.produit = data;
         this.loading = false;
-        this.produitService.getTopVendus(100).subscribe(topVendus => {
-          const vente = topVendus.find(v => v.id === id);
-          this.ventesTotales = vente ? vente.quantity : 0;
-        });
       },
       error: () => {
         this.error = 'Erreur lors du chargement du produit';
         this.loading = false;
       }
     });
+  }
+
+  loadStats(id: number): void {
+    this.factureService.getVentesTotalesByProduit(id).subscribe(data => this.ventesTotales = data);
+    this.factureService.getClientsCommandantProduit(id).subscribe(data => this.clientsCommandant = data);
   }
 
   goToEdit(): void {

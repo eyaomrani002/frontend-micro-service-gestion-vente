@@ -58,7 +58,7 @@
       </mat-card>
 
       <h3>Clients ayant commandé ce produit</h3>
-      <table mat-table [dataSource]="clientsCommandant" class="modern-table">
+      <table mat-table [dataSource]="clientsCommandant" class="modern-table" *ngIf="clientsCommandant && clientsCommandant.length; else noClients">
         <ng-container matColumnDef="clientName">
           <th mat-header-cell *matHeaderCellDef>Client</th>
           <td mat-cell *matCellDef="let item">{{ item.clientName }}</td>
@@ -70,11 +70,14 @@
         <tr mat-header-row *matHeaderRowDef="['clientName', 'quantite']"></tr>
         <tr mat-row *matRowDef="let row; columns: ['clientName', 'quantite'];"></tr>
       </table>
+      <ng-template #noClients>
+        <p class="empty-info">Aucun client n'a encore commandé ce produit.</p>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 
   <div class="detail-actions">
-    <button mat-raised-button color="accent" (click)="goToEdit()">
+    <button *ngIf="role === 'ADMIN'" mat-raised-button color="accent" (click)="goToEdit()">
       <mat-icon>edit</mat-icon>
       Modifier
     </button>

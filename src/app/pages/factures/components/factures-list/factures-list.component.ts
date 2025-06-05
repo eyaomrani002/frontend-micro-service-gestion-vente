@@ -15,6 +15,7 @@ import { FactureService } from '../../services/facture.service';
 import { Facture } from '../../models/facture.model';
 import { ToastrService } from 'ngx-toastr';
 import jsPDF from 'jspdf';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-factures-list',
@@ -42,13 +43,16 @@ export class FacturesListComponent implements OnInit {
   loading = false;
   errorMessage = '';
   hasData = false;
+  role: string | null = null;
 
   constructor(
     private factureService: FactureService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.loadFactures();
   }
 

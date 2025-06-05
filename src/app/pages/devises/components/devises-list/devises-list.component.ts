@@ -12,6 +12,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-devises-list',
@@ -31,10 +32,12 @@ export class DevisesListComponent implements OnInit {
   displayedColumns: string[] = ['code', 'name', 'tauxChange', 'deviseReference', 'actions'];
   loading = false;
   error = '';
+  role: string | null = null;
 
-  constructor(private deviseService: DeviseService, private router: Router) {}
+  constructor(private deviseService: DeviseService, private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.loadDevises();
   }
 

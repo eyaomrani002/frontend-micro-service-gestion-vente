@@ -11,6 +11,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-clients-list',
@@ -22,11 +23,13 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 export class ClientsListComponent implements OnInit {
   clients$!: Observable<Client[]>;
   displayedColumns: string[] = ['id', 'name', 'email', 'adresse', 'actions'];
+  role: string | null = null;
 
-  constructor(private clientService: ClientService,private toastrService: ToastrService) { }
+  constructor(private clientService: ClientService, private toastrService: ToastrService, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.clients$ = this.clientService.getClients();
+    this.role = this.authService.getRole();
   }
 
 deleteClient(id: number): void {

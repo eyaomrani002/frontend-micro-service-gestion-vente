@@ -12,6 +12,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { Facture } from '../../../factures/models/facture.model';
 import { MatTableModule } from '@angular/material/table';
+import { AuthService } from '../../../login/services/auth.service';
+import { FactureService } from '../../../factures/services/facture.service';
 
 @Component({
   selector: 'app-client-detail',
@@ -39,15 +41,19 @@ export class ClientDetailComponent implements OnInit {
   facturesReglees: Facture[] = [];
   facturesNonReglees: Facture[] = [];
   produitsSollicites: any[] = [];
+  role: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private clientService: ClientService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService,
+    private factureService: FactureService
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.role = this.authService.getRole();
     if (!id) {
       this.error = 'ID client invalide';
       return;
@@ -71,11 +77,11 @@ export class ClientDetailComponent implements OnInit {
   }
 
   loadStatistics(id: number): void {
-    this.clientService.getChiffreAffaires(id).subscribe(data => this.chiffreAffaires = data);
-    this.clientService.getResteAPayer(id).subscribe(data => this.resteAPayer = data);
-    this.clientService.getFacturesByStatut(id, 'PAYEE').subscribe(data => this.facturesReglees = data);
-    this.clientService.getFacturesByStatut(id, 'NON_PAYEE').subscribe(data => this.facturesNonReglees = data);
-    this.clientService.getProduitsSollicites(id).subscribe(data => this.produitsSollicites = data);
+    this.factureService.getChiffreAffairesByClient(id).subscribe(data => this.chiffreAffaires = data);
+    this.factureService.getResteAPayerByClient(id).subscribe(data => this.resteAPayer = data);
+    this.factureService.getFacturesRegleesByClient(id).subscribe(data => this.facturesReglees = data);
+    this.factureService.getFacturesNonRegleesByClient(id).subscribe(data => this.facturesNonReglees = data);
+    this.factureService.getProduitsSollicitesByClient(id).subscribe(data => this.produitsSollicites = data);
   }
 
   goToEdit(): void {

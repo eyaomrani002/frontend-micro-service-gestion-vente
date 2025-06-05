@@ -13,6 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-reglement-detail',
@@ -35,15 +36,18 @@ export class ReglementDetailComponent implements OnInit {
   facture: Facture | null = null;
   loading = false;
   error: string | null = null;
+  role: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private reglementService: ReglementService,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     const id = +this.route.snapshot.paramMap.get('id')!;
+    this.role = this.authService.getRole();
     this.loadReglement(id);
   }
 

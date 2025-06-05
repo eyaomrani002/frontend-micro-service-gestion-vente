@@ -95,10 +95,45 @@
         </mat-card-content>
       </mat-card>
     </mat-tab>
+
+    <mat-tab label="Statistiques">
+      <mat-card class="detail-card">
+        <mat-card-content>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">attach_money</mat-icon>
+            <div class="detail-content">
+              <h3>Total</h3>
+              <p class="detail-value">{{ factureStats?.total | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">payment</mat-icon>
+            <div class="detail-content">
+              <h3>Montant Payé</h3>
+              <p class="detail-value">{{ factureStats?.montantPaye | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">money_off</mat-icon>
+            <div class="detail-content">
+              <h3>Reste à Payer</h3>
+              <p class="detail-value">{{ factureStats?.resteAPayer | currency:'TND' }}</p>
+            </div>
+          </div>
+          <div class="detail-item">
+            <mat-icon class="detail-icon">list</mat-icon>
+            <div class="detail-content">
+              <h3>Nombre de lignes</h3>
+              <p class="detail-value">{{ factureStats?.lignes }}</p>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </mat-tab>
   </mat-tab-group>
 
   <div class="detail-actions">
-    <button mat-raised-button color="accent" [routerLink]="['/factures/edit', facture.id]">
+    <button *ngIf="role === 'ADMIN'"mat-raised-button color="accent" [routerLink]="['/factures/edit', facture.id]">
       <mat-icon>edit</mat-icon>
       Modifier
     </button>

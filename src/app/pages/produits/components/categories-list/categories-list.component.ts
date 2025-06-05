@@ -10,6 +10,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Categorie } from '../../models/categorie.model';
 import { CategorieService } from '../../services/categorie.service';
 import { ToastrService } from 'ngx-toastr';
+import { AuthService } from '../../../login/services/auth.service';
 
 @Component({
   selector: 'app-categories-list',
@@ -32,10 +33,12 @@ export class CategoriesListComponent implements OnInit {
   loading = false;
   errorMessage = '';
   hasData = false;
+  role: string | null = null;
 
-  constructor(private categorieService: CategorieService, private toastr: ToastrService) {}
+  constructor(private categorieService: CategorieService, private toastr: ToastrService, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     this.loadCategories();
   }
 

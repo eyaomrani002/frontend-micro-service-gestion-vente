@@ -7,6 +7,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../../login/services/auth.service';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @Component({
   selector: 'app-devise-detail',
@@ -16,8 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    CommonModule,
-    MatCardModule,
+    MatTabsModule,
+    MatProgressSpinnerModule,
     RouterModule,
   ],
   templateUrl: './devise-detail.component.html',
@@ -26,15 +29,18 @@ import { MatIconModule } from '@angular/material/icon';
 export class DeviseDetailComponent implements OnInit {
   devise?: Devise;
   error = '';
+  role: string | null = null;
 
   constructor(
     private deviseService: DeviseService,
     private route: ActivatedRoute,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
+    this.role = this.authService.getRole();
     const id = +this.route.snapshot.paramMap.get('id')!;
     this.deviseService.getDeviseById(id).subscribe({
       next: (devise) => this.devise = devise,
